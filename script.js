@@ -2,6 +2,7 @@
 
 // constant variables for html calling. name well
 const homeScreen = document.querySelector(".container");
+const scoreBoard = document.querySelector(".scoreboard");
 
 const board = document.querySelector(".board");
 
@@ -85,16 +86,26 @@ const clearHomeScreen = function () {
 // create a function to draw X and a function to draw O
 
 function addXToBoard() {
-  const boardItems = document.querySelectorAll(".board-item");
-  boardItems.forEach((item) => {
-    item.addEventListener("click", drawX);
-  });
+  if (!winner) {
+    const boardItems = document.querySelectorAll(".board-item");
+    boardItems.forEach((item) => {
+      item.addEventListener("click", drawX);
+    });
+  }
 }
 const drawX = function () {
+  if (winner) {
+    const boardItems = document.querySelectorAll(".board-item");
+    boardItems.forEach((item) => {
+      item.removeEventListener("click", drawX);
+    });
+    return;
+  }
   if (this.textContent === "") {
     this.textContent = "x";
     isWinner();
     aiMove();
+    isWinner();
   }
 };
 
@@ -140,14 +151,26 @@ const isWinner = function () {
     const symbolA = boardItems[a].textContent;
     const symbolB = boardItems[b].textContent;
     const symbolC = boardItems[c].textContent;
-    console.log(symbolA, symbolB, symbolC);
     if (symbolA && symbolA === symbolB && symbolB === symbolC) {
       // If the symbols are equal and not empty, we have a winner
       winner = true;
       console.log("we have a winner");
-      return true;
+      scoreBoard.textContent = "There is a winner!";
+      scoreBoard.classList.toggle("hidden");
+    }
+  }
+  let contentsLength = 0;
+  for (let i = 0; i < 9; i++) {
+    const isThereSquareContents = boardItems[i].textContent;
+    if (isThereSquareContents === "x" || isThereSquareContents === "O") {
+      contentsLength += 1;
+      if (contentsLength === 9) {
+        winner = true;
+        console.log("It's a Draw!");
+        scoreBoard.textContent = "It was a draw";
+        scoreBoard.classList.toggle("hidden");
+      }
     }
   }
   winner = false;
-  return false;
 };
