@@ -86,26 +86,18 @@ const clearHomeScreen = function () {
 // create a function to draw X and a function to draw O
 
 function addXToBoard() {
-  if (!winner) {
-    const boardItems = document.querySelectorAll(".board-item");
-    boardItems.forEach((item) => {
-      item.addEventListener("click", drawX);
-    });
-  }
+  const boardItems = document.querySelectorAll(".board-item");
+  boardItems.forEach((item) => {
+    item.addEventListener("click", drawX);
+  });
 }
 const drawX = function () {
-  if (winner) {
-    const boardItems = document.querySelectorAll(".board-item");
-    boardItems.forEach((item) => {
-      item.removeEventListener("click", drawX);
-    });
-    return;
-  }
   if (this.textContent === "") {
     this.textContent = "x";
     isWinner();
     aiMove();
     isWinner();
+    console.log(winner);
   }
 };
 
