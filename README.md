@@ -1,3 +1,3 @@
 making a game of tic tac toe
 
-live version ->
+live version -> https://officialrazzaer.github.io/tictactoe/
