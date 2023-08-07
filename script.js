@@ -17,7 +17,10 @@ let humanOneButtonClicked = false;
 let humanTwoButtonClicked = false;
 let aiOneButtonClicked = false;
 let aiTwoButtonClicked = false;
+// Define and set the start variable to true
 let start = false;
+
+// set which players are active
 
 const startGame = function () {
   if (humanOneButtonClicked && aiTwoButtonClicked) {
@@ -57,6 +60,13 @@ function handleButton4Click() {
   startGame();
 }
 
+// startButton.addEventListener("click", createGameboard);
+
+humanOneButton.addEventListener("click", handleButton1Click);
+humanTwoButton.addEventListener("click", handleButton2Click);
+aiOneButton.addEventListener("click", handleButton3Click);
+aiTwoButton.addEventListener("click", handleButton4Click);
+
 // creates the gameboard
 const createGameboard = function () {
   if (start === true) {
@@ -72,15 +82,9 @@ const createGameboard = function () {
 
 startButton.addEventListener("click", createGameboard);
 
-humanOneButton.addEventListener("click", handleButton1Click);
-humanTwoButton.addEventListener("click", handleButton2Click);
-aiOneButton.addEventListener("click", handleButton3Click);
-aiTwoButton.addEventListener("click", handleButton4Click);
-
-// clear the contents of the screen if these conditions are met
-const clearHomeScreen = function () {
+function clearHomeScreen() {
   homeScreen.classList.toggle("hidden");
-};
+}
 
 // create game functionality
 // create a function to draw X and a function to draw O
@@ -91,41 +95,56 @@ function addXToBoard() {
     item.addEventListener("click", drawX);
   });
 }
-const drawX = function () {
+
+function drawX() {
+  if (winner) {
+    return;
+  }
   if (this.textContent === "") {
-    this.textContent = "x";
-    isWinner();
-    aiMove();
-    isWinner();
+    this.textContent = "X";
+    if (!isWinner()) {
+      isWinner();
+      aiMove();
+    }
     console.log(winner);
   }
-};
+}
 
 // create a function to draw a random move such as X or O depending on which pieces were chosen
-const aiMove = function () {
-  let randomSquare;
-  do {
-    randomSquare = Math.floor(Math.random() * 9) + 1;
-  } while (isSquareFilled(randomSquare));
-
-  const boardItem = document.querySelector(`.board-item-${randomSquare}`);
-
-  if (boardItem.textContent === "") {
-    boardItem.textContent = "O";
-  } else {
-    aiMove();
+function aiMove() {
+  if (winner) {
+    return;
   }
-};
+  const boardItems = document.querySelectorAll(".board-item");
+  const emptySquares = Array.from(boardItems).filter(
+    (item) => item.textContent === ""
+  );
+
+  if (emptySquares.length === 0) {
+    // No empty squares left, the game is a draw
+    winner = true;
+    console.log("It's a Draw!");
+    scoreBoard.textContent = "It was a draw";
+    scoreBoard.classList.toggle("hidden");
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * emptySquares.length);
+  emptySquares[randomIndex].textContent = "O";
+
+  isWinner();
+}
 
 function isSquareFilled(squareNumber) {
-  const boardItem = document.querySelector(`.board-item-${squareNumber}`);
+  const boardItem = document.querySelector(`.board-item-${squareNumber + 1}`);
   return boardItem.textContent === "X" || boardItem.textContent === "O";
 }
 
-// create a fucntion to apply to which options were chosen
+// create a function to apply to which options were chosen
 // create winning mechanics
 let winner = false;
-const isWinner = function () {
+
+function isWinner() {
   const boardItems = document.querySelectorAll(".board-item");
 
   const winningCombinations = [
@@ -138,6 +157,7 @@ const isWinner = function () {
     [0, 4, 8],
     [2, 4, 6],
   ];
+
   for (const combination of winningCombinations) {
     const [a, b, c] = combination;
     const symbolA = boardItems[a].textContent;
@@ -149,12 +169,14 @@ const isWinner = function () {
       console.log("we have a winner");
       scoreBoard.textContent = "There is a winner!";
       scoreBoard.classList.toggle("hidden");
+      return true;
     }
   }
+
   let contentsLength = 0;
   for (let i = 0; i < 9; i++) {
     const isThereSquareContents = boardItems[i].textContent;
-    if (isThereSquareContents === "x" || isThereSquareContents === "O") {
+    if (isThereSquareContents === "X" || isThereSquareContents === "O") {
       contentsLength += 1;
       if (contentsLength === 9) {
         winner = true;
@@ -164,5 +186,8 @@ const isWinner = function () {
       }
     }
   }
-  winner = false;
-};
+  return false;
+}
+
+// add a popup for reset after winner is chosen or draw
+function reset() {}
