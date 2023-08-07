@@ -11,6 +11,10 @@ const humanOneButton = document.getElementById("human-one");
 const humanTwoButton = document.getElementById("human-two");
 const aiOneButton = document.getElementById("ai-one");
 const aiTwoButton = document.getElementById("ai-two");
+const startButtons = document.querySelectorAll(".selection");
+
+const resetButton = document.getElementById("reset-button");
+const resetPopup = document.getElementById("reset-popup");
 
 // create conditions for when the game board is created otherwise isn't. it will be added to creation so that if the conditions are met it runs otherwise it is not run
 let humanOneButtonClicked = false;
@@ -42,21 +46,25 @@ const startGame = function () {
 
 function handleButton1Click() {
   humanOneButtonClicked = true;
+  humanOneButton.style.backgroundColor = "rgb(82, 27, 27)";
   startGame();
 }
 
 function handleButton2Click() {
   humanTwoButtonClicked = true;
+  humanTwoButton.style.backgroundColor = "rgb(82, 27, 27)";
   startGame();
 }
 
 function handleButton3Click() {
   aiOneButtonClicked = true;
+  aiOneButton.style.backgroundColor = "rgb(82, 27, 27)";
   startGame();
 }
 
 function handleButton4Click() {
   aiTwoButtonClicked = true;
+  aiTwoButton.style.backgroundColor = "rgb(82, 27, 27)";
   startGame();
 }
 
@@ -75,28 +83,28 @@ const createGameboard = function () {
       createBoardItem.className = `board-item board-item-${i + 1}`;
       board.appendChild(createBoardItem);
     }
-    clearHomeScreen();
-    addXToBoard();
+    toggleHomeScreen();
+    move();
   }
 };
 
 startButton.addEventListener("click", createGameboard);
 
-function clearHomeScreen() {
+function toggleHomeScreen() {
   homeScreen.classList.toggle("hidden");
 }
 
 // create game functionality
 // create a function to draw X and a function to draw O
 
-function addXToBoard() {
+function move() {
   const boardItems = document.querySelectorAll(".board-item");
   boardItems.forEach((item) => {
-    item.addEventListener("click", drawX);
+    item.addEventListener("click", drawMove);
   });
 }
 
-function drawX() {
+function drawMove() {
   if (winner) {
     return;
   }
@@ -125,8 +133,9 @@ function aiMove() {
     winner = true;
     console.log("It's a Draw!");
     scoreBoard.textContent = "It was a draw";
-    scoreBoard.classList.toggle("hidden");
-    return;
+    // scoreBoard.classList.toggle("hidden");
+    resetPopup.classList.add("show");
+    return true;
   }
 
   const randomIndex = Math.floor(Math.random() * emptySquares.length);
@@ -169,6 +178,7 @@ function isWinner() {
       console.log("we have a winner");
       scoreBoard.textContent = "There is a winner!";
       scoreBoard.classList.toggle("hidden");
+      resetPopup.classList.add("show");
       return true;
     }
   }
@@ -183,11 +193,25 @@ function isWinner() {
         console.log("It's a Draw!");
         scoreBoard.textContent = "It was a draw";
         scoreBoard.classList.toggle("hidden");
+        resetPopup.classList.add("show");
       }
     }
   }
   return false;
 }
 
-// add a popup for reset after winner is chosen or draw
-function reset() {}
+// add a popup for reset after winner is chosen or draw, toggle to homescreen, remove board
+resetButton.addEventListener("click", () => {
+  resetPopup.classList.remove("show");
+  const boardItems = document.querySelectorAll(".board-item");
+  boardItems.forEach((item) => {
+    board.removeChild(item);
+  });
+  scoreBoard.textContent = "";
+  scoreBoard.classList.toggle("hidden");
+  winner = false;
+  startButtons.forEach((button) => {
+    button.style.backgroundColor = "#45a049";
+  });
+  toggleHomeScreen();
+});

@@ -93,6 +93,7 @@ button.selection {
 
 button.selection:hover {
   background-color: #ddd;
+  font-size: 36px;
 }
 
 /* creating the board  */
