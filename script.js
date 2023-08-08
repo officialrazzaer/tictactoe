@@ -23,6 +23,7 @@ let aiOneButtonClicked = false;
 let aiTwoButtonClicked = false;
 // Define and set the start variable to true
 let start = false;
+let p1Moved = false;
 
 // set which players are active
 
@@ -47,12 +48,14 @@ const startGame = function () {
 function handleButton1Click() {
   humanOneButtonClicked = true;
   humanOneButton.style.backgroundColor = "rgb(82, 27, 27)";
+  aiOneButton.disabled = true;
   startGame();
 }
 
 function handleButton2Click() {
   humanTwoButtonClicked = true;
   humanTwoButton.style.backgroundColor = "rgb(82, 27, 27)";
+  aiTwoButton.disabled = true;
   startGame();
 }
 
@@ -65,6 +68,7 @@ function handleButton3Click() {
 function handleButton4Click() {
   aiTwoButtonClicked = true;
   aiTwoButton.style.backgroundColor = "rgb(82, 27, 27)";
+  humanTwoButton.disabled = true;
   startGame();
 }
 
@@ -99,20 +103,25 @@ function toggleHomeScreen() {
 
 function move() {
   const boardItems = document.querySelectorAll(".board-item");
-  boardItems.forEach((item) => {
-    item.addEventListener("click", drawMove);
-  });
+  if (p1Moved === false) {
+    boardItems.forEach((item) => {
+      item.addEventListener("click", drawMove);
+    });
+  }
 }
 
 function drawMove() {
   if (winner) {
     return;
-  }
-  if (this.textContent === "") {
-    this.textContent = "X";
-    if (!isWinner()) {
-      isWinner();
-      aiMove();
+  } else if (p1Moved === false) {
+    if (this.textContent === "") {
+      this.textContent = "X";
+      p1Moved = true;
+      console.log(p1Moved);
+      if (!isWinner()) {
+        isWinner();
+        aiMove();
+      }
     }
     console.log(winner);
   }
@@ -128,6 +137,30 @@ function aiMove() {
     (item) => item.textContent === ""
   );
 
+  function humanMoveSecond(event) {
+    const clickedItem = event.target;
+    console.log("Content of clicked item:", clickedItem.textContent);
+    console.log("we entered");
+    console.log(p1Moved);
+    if (clickedItem.textContent === "") {
+      clickedItem.textContent = "O";
+      console.log("we work");
+      p1Moved = false;
+      isWinner();
+    }
+  }
+
+  if (humanOneButtonClicked && humanTwoButtonClicked) {
+    boardItems.forEach((item) => {
+      item.addEventListener("click", humanMoveSecond);
+    });
+  } else {
+    p1Moved = false;
+    const randomIndex = Math.floor(Math.random() * emptySquares.length);
+    emptySquares[randomIndex].textContent = "O";
+    isWinner();
+  }
+
   if (emptySquares.length === 0) {
     // No empty squares left, the game is a draw
     winner = true;
@@ -137,9 +170,6 @@ function aiMove() {
     resetPopup.classList.add("show");
     return true;
   }
-
-  const randomIndex = Math.floor(Math.random() * emptySquares.length);
-  emptySquares[randomIndex].textContent = "O";
 
   isWinner();
 }
@@ -213,5 +243,16 @@ resetButton.addEventListener("click", () => {
   startButtons.forEach((button) => {
     button.style.backgroundColor = "#45a049";
   });
+  p1Moved = false;
+  aiOneButton.disabled = false;
+  aiTwoButton.disabled = false;
+  humanOneButton.disabled = false;
+  humanTwoButton.disabled = false;
+
+  humanOneButtonClicked = false;
+  humanTwoButtonClicked = false;
+  aiOneButtonClicked = false;
+  aiTwoButtonClicked = false;
+
   toggleHomeScreen();
 });
