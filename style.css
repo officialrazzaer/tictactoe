@@ -203,4 +203,16 @@ button.selection:hover {
     background-color: #ddd;
     font-size: 16px;
   }
+
+  .select-type {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 25vw;
+  }
+  .player1,
+  .player2 {
+    margin-bottom: 10px;
+    margin: 25px;
+  }
 }
