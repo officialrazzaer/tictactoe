@@ -186,6 +186,21 @@ button.selection:hover {
     font-size: 16px;
   }
   body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+
+  .scoreboard {
+    font-size: 16px;
+  }
+
+  button.selection:hover {
+    background-color: #ddd;
+    font-size: 36px;
   }
 }
